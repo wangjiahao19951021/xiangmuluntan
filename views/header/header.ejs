@@ -1,0 +1,115 @@
+<style>
+  .header .btn-box{
+    height: 100%;
+    padding: 8px 0px;
+    
+  }
+  .header .head-img{
+    width: 40px;
+    height: 40px;
+  }
+  .header .info-box{
+    height: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+  }
+  .header .info-box button{
+    margin-left: 10px;
+  }
+  .header .btn-box a{
+    padding: 6px 12px;
+    color: #fff !important;
+    display: inline-block;
+  }
+  .header .btn-box a:hover{
+    color: #5cb85c !important;
+  }
+</style>
+<header class="header">
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            
+            <a class="navbar-brand" href="/"><%= title%></a>
+          </div>
+
+
+          <!-- 导航 -->
+          <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">点开有惊喜 <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/commit">发帖</a></li>
+                  <li><a href="/commit-list">帖子列表</a></li>                  
+                </ul>
+              </li>
+            </ul>
+
+      
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="btn-box">
+                <!-- <a href="">aaa</a>
+                <button class="btn btn-success">登录</button>
+                <button class="btn btn-success">注册</button> -->
+      
+                <a class="btn btn-success" href="/login">登录</a>
+                <a class="btn btn-success" href="/register">注册</a>
+              </li>
+              <li class="info-box hidden">
+                  <a>二狗子</a>
+                  <div class="img-common-box head-img">
+                    <img src="/images/moren.jpg">
+                  </div> 
+                  <button class="btn btn-warning">注销</button>
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+</header>
+
+<script>
+  // 使用cookie
+  window.onload = function () {
+    checkLogin ()
+    $(".btn-warning").click(exit)
+  }
+
+  function checkLogin () {
+    let userinfo = $.cookie('userinfo')
+    // 转换为json格式
+    if (userinfo) {
+      userinfo = JSON.parse(userinfo);
+    }
+    // console.log(userinfo)
+    if (userinfo && userinfo._id) {
+      let infobox = $(".info-box").removeClass("hidden");
+      infobox.find('a').html(userinfo.nickname);
+      infobox.find('img').prop("src", userinfo.headImg)
+
+      $(".btn-box").addClass("hidden")
+    } else {
+      $(".info-box").addClass("hidden")
+      $(".btn-box").removeClass("hidden")
+    }
+  }
+
+  function exit () {
+    $.cookie('userinfo', null,{expires:-1})
+    checkLogin ()
+  }
+</script>
+
+<!-- {
+  "title": "第一张图片",
+  "imgUrl": "/images/1.jpg"
+}
+{
+  "title": "第二张图片",
+  "imgUrl": "/images/2.jpeg"
+} -->

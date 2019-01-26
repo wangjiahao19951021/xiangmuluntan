@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/index.css' />
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/common.css">
+    <link rel="stylesheet" href="/stylesheets/message.css">
+  </head>
+  <body>
+    <!-- 使用富文本编辑器 http://www.wangeditor.com/ -->
+    <!-- <!-- =普通输出 - -输出-> -->
+    <%- include("./header/header.ejs") %>
+    
+    <section class="container">
+      <p>
+        <a href="/">回到首页</a>
+        <a href="/commit-list">查看列表</a>
+      </p>
+
+      <form id='form' style="margin-top: 20px;">
+        <div class="form-group classify">
+            <label for="">类型：</label>
+            <!-- 使用服务端渲染 -->
+            <!-- 渲染类型的按钮 -->
+            <!-- <button class="btn btn-primary" type="button">技术</button> -->
+            <!-- <button class="btn btn-default" type="button">情感</button> -->
+            <% classify.forEach((item, i) => { %>
+              <button class="btn btn-<%= i === 0 ? 'primary' : 'default' %>" type="button" data-id="<%= item._id %>" data-type="<%= item.type %>"><%= item.title %></button>
+            <% }) %>
+        </div>
+        <div class="form-group">
+          <label for="">标题：</label>
+          <input type="text" class="form-control" id="title">
+        </div>
+        <div class="form-group">
+            <label for="">内容：</label>
+            <textarea class="form-control" rows="15" style="resize: none" id="content"></textarea>
+        </div>
+        <div class="form-group">
+            <button type='submit' class="btn btn-success">发布</button>
+            <button type='reset' class="btn btn-default">重置</button>
+        </div>
+      </form>
+    </section>
+    
+
+    
+  </body>
+  <script src="/javascripts/jquery.min.js"></script>
+  <script src="/javascripts/jquery-cookie.js"></script>
+  <script src="/javascripts/message.min.js"></script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+  <script>
+
+    // 此处使用了自执行函数 因为上面有相同的名字 同时此处不污染全局
+    (function ($) {
+
+      let classify_item = {
+        type: $(".classify .btn").eq(0).attr("data-type"),
+        id: $(".classify .btn").eq(0).data('id')
+      }
+      addEvent ()
+      $("#form").submit(commit);
+    function commit (e){
+      // 阻止表单默认提交
+      e.preventDefault();
+
+      let userinfo = checkLogin();
+      if (!userinfo) {
+        return false
+      }
+
+      let title = $("#title").val();
+      let content = $("#content").val();
+      
+      // 提交内容
+      $.ajax({
+        url: '/api/v1/commit',
+        type: 'POST',
+        data: {
+          title: title,
+          content: content,
+          author_id: userinfo._id,
+          author_nick: userinfo.nickname,
+          type: classify_item.type,
+          classid: classify_item.id
+        },
+        success: function (results) {
+          console.log(results)
+        }
+      })
+    }
+
+    // 判断是否登录
+    function checkLogin () {
+      let userinfo = JSON.parse($.cookie('userinfo') || '{}')
+      if (!userinfo._id) {
+        $.message({
+          message: '请登录后操作',
+          type: "warning",
+          time: 1000
+        })
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 2000)
+        return false;
+      } else {
+        return userinfo
+      }
+    }
+
+    function addEvent () {
+      // delegate() 方法为指定的元素（属于被选元素的子元素）添加一个或多个事件处理程序，并规定当这些事件发生时运行的函数。使用 delegate() 方法的事件处理程序适用于当前或未来的元素（比如由脚本创建的新元素）。
+      $(".classify").delegate(".btn", 'click', function () {
+        // 如果等于当前元素
+        if (classify_item.type === $(this).attr('data-type')) {
+          return false
+        } else {
+          classify_item.type = $(this).attr('data-type')
+          classify_item.id = $(this).attr('data-id')
+          //修改样式
+          $(this).addClass("btn-primary").removeClass("btn-default").siblings().addClass("btn-default").removeClass('btn-primary')
+        } 
+      })
+    }
+
+    })($)
+  </script>
+</html>

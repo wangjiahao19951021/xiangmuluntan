@@ -1,0 +1,53 @@
+<style>
+    .form_last{
+        margin-top: 20px;
+    }
+    .form-grow label{
+        margin:10px 0;
+    }
+</style>
+
+<section class="container">
+        <div class="row">
+          <form class="col-xs-12 col-sm-6 col-sm-offset-3" id="form">
+            <p class="alert alert-success">
+ 
+                <% if (type === 'login') { %>
+                    <span>登录：</span>
+                <% } else { %>
+                    <span>注册：</span>
+                <% } %>
+                
+
+            </p>
+            <div class="form-grow">
+              <label for="">用户名</label>
+              <input type="text" class="form-control" id="username">
+            </div>
+            <div class="form-grow">
+              <label for="">密码</label>
+              <input type="password" class="form-control" id="password">
+            </div>
+
+            <% if (type === 'register') { %>
+                <div class="form-grow">
+                        <label for="">昵称</label>
+                        <input type="text" class="form-control" id="nickname">
+                </div>
+            <% } %>
+            
+            <div class="form-grow form_last">
+              <button type="submit" class="btn btn-success">提交</button>
+              
+
+                <% if (type === 'login') { %>
+                    <a href="/register">去注册</a>
+                <% } else { %>
+                    <a href="/login">去登录</a>
+                <% } %>
+
+              <a href="/">回到首页</a>
+            </div>
+          </form>
+        </div>
+      </section>

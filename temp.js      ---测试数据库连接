@@ -1,0 +1,10 @@
+
+
+const connect = require("./connect");
+
+connect ((db, close) => {
+
+   console.log(db)
+
+    close();
+})
