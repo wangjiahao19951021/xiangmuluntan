@@ -75,7 +75,14 @@ err:
 
 url: /api/v1/commit
 method: POST
-params
+params: {
+    content, 
+    title, 
+    author_id, 
+    author_nick, 
+    type, 
+    classid
+}
 response: {
     err, data
 }
