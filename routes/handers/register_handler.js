@@ -5,7 +5,7 @@ const connect = require("../../modules/connect")
 
 const registerHandler = (req, res, next) => {
     // 获取前端发送过来的数据
-    // post req.body  get req.params
+    // post req.body  get req.query
     let params = req.body
 
     let content = {err: null, data: {}}

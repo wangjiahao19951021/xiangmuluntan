@@ -5,7 +5,7 @@ const connect = require("../../modules/connect")
 const commitHandler = (req, res, next) =>{
     // 获取前端传过来的数据 post请求方式
     let params = req.body;
-    console.log(params)
+    // console.log(params)
     // title content author_id author_nick
     // let {content, title, author_id, author_nick, type, classid}
 

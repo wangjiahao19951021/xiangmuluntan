@@ -1,32 +1,5 @@
 
-## express项目生成器
-
-# http://www.expressjs.com.cn/starter/generator.html
-
-# npm init -y
-
-# yarn add express -S
-
-
-
-# 全局安装express 和express应用生成器
- # npm install express -g
- # npm install express-generator -g
-
-express xiangmuluntan   jade语法
-
-# express -e xiangmuluntan  ejs语法 使用此种方法express应用生成器
-
-# 一次性安装 yarn一次性安装page.json中的包   
-# yarn 
-
-# yarn add mongodb -S
-
-
-
-
-
-#   接口文档
+###   接口文档
 
 1. 注册
 

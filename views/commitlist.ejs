@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/common.css">
+    <link rel="stylesheet" href="/stylesheets/pagination.css">
+  </head>
+  <style>
+    .commit-list th, .commit-list td{
+      text-align: center;
+    }
+    .m-style .active{
+      background: rgb(51, 122, 183);
+      color: #fff;
+      border: 1px solid rgb(51, 122, 183);
+    }
+    .m-style a:hover{
+      background: rgb(51, 122, 183);
+    }
+  </style>
+  <body>
+    <%- include("./header/header.ejs") %>
+
+    <section class="container">
+      <!-- 鼠标悬停表格 -->
+      <table class="table table-hover commit-list">
+       <thead>
+          <tr>
+              <th>序号</th>
+              <th>标题</th>
+              <th>作者</th>
+              <th>时间</th>
+              <th>操作</th>
+            </tr>
+       </thead>
+        <!-- <tr>
+          <td>1</td>
+          <td>asdf</td>
+          <td>sadfsadf</td>
+          <td>asdfasf</td>
+          <td>
+            <button class="btn btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></button>
+            <button class="btn btn-primary"><i class="glyphicon glyphicon-thumbs-down"></i></button>
+          </td>
+        </tr> -->
+        <tbody>
+
+        </tbody>
+      </table>
+
+
+      <!-- 分页 pagination -->
+      <div class="M-box1 m-style">
+        
+      </div>
+    </section>
+    
+  </body>
+  <script src="/javascripts/jquery.min.js"></script>
+  <script src="/javascripts/jquery-cookie.js"></script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+  <script src="/javascripts/jquery.pagination.js"></script>
+  <script>
+  (function ($) {
+    // 每页多少条数据
+    let pageSize = 8
+    // 当前第几页
+    let pageNum = 1
+
+    // 面向window对象
+    init()
+
+
+    
+
+
+    function init () {
+      getCommits ((data) => {
+        renderCommits(data.commits)
+        renderPagination (data.totalData)
+      })
+    }
+
+    function getCommits (callback) {
+      $.ajax({
+        url: '/api/v1/getcommits',
+        type: 'GET',
+        data: {
+          pageSize,
+          pageNum
+        },
+        success: function (results) {
+          console.log(results)
+          callback(results.data)
+        }
+      })
+    }
+
+    function renderCommits (commits) {
+      let str = ''
+      // map 变为数组 join 转为字符串
+      str = commits.map((item, i) => {
+        return `<tr>
+          <td>${i+1}</td>
+          <td>${item.title}</td>
+          <td>${item.author_nick}</td>
+          <td>${item.time}</td>
+          <td>
+            <button class="btn btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></button>
+            <button class="btn btn-primary"><i class="glyphicon glyphicon-thumbs-down"></i></button>
+          </td>
+        </tr> `
+      }).join();
+      $(".commit-list tbody").html('')
+      $(".commit-list tbody").append(str)
+    }
+
+    function renderPagination (totalData) {
+      // 分页
+      $('.M-box1').pagination({
+        // 一共多少条多少数据
+        totalData: totalData,
+        //
+        showData: pageSize,
+        coping: true,
+        callback: function (api) {
+          pageNum = api.getCurrent()
+          // 点击从新渲染数据
+          getCommits ((data) => {
+            renderCommits(data.commits)
+          })
+        }
+      });
+    }
+  })($)
+  </script>
+</html>

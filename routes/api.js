@@ -19,4 +19,14 @@ router.get("/banners", handler.bannersHandler)
 // 提交文本内容接口
 router.post("/commit", handler.commitHandler)
 
+// 处理图片上传内容
+router.post("/upload_content_img", handler.uploadContentImgHandler)
+
+
+// 返回列表内容接口
+router.get("/getcommits", handler.getcommitsHandler)
+
+
+
+
 module.exports = router;

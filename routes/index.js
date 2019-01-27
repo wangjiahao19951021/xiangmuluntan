@@ -37,7 +37,7 @@ const findClassify = require("./handers/find_classfiy")
 
 router.get('/', function (req, res, next) {
 
-  res.render('index', { title: '论坛' });
+  res.render('index', { title: '我的社区' });
   
 });
 
@@ -69,6 +69,14 @@ router.get('/commit', function (req, res, next) {
   
 })
 
+
+
+// 列表页面
+router.get('/commitlist', function (req, res, next) {
+
+  res.render('commitlist', { title: '列表'});
+  
+})
 
 
 
