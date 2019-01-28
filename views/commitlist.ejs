@@ -18,11 +18,33 @@
     .m-style a:hover{
       background: rgb(51, 122, 183);
     }
+    .m-style a {
+      background: #12158c52;
+      color: #0e0e0e;
+    }
+
   </style>
   <body>
     <%- include("./header/header.ejs") %>
 
     <section class="container">
+      <!-- 排序 -->
+      <p class="order">
+        <button class="btn btn-primary" data-order="time">时间</button>
+        <button class="btn btn-default" data-order="hot">点赞</button>
+        <span>当前是以 <span class="text"><strong>时间</strong></span> 排序的</span>
+      </p>
+      <!-- 分类 -->
+      <p class="classify">
+          <button class="btn btn-primary" data-type="all">全部</button>
+          <button class="btn btn-default" data-type="technology">技术</button>
+          <button class="btn btn-default" data-type="emotion">情感</button>
+          <button class="btn btn-default" data-type="makefriends">交友</button>
+          <span>当前是以 <span class="text"><strong>全部</strong></span> 分类的</span>
+      </p>
+
+
+
       <!-- 鼠标悬停表格 -->
       <table class="table table-hover commit-list">
        <thead>
@@ -55,6 +77,8 @@
         
       </div>
     </section>
+
+
     
   </body>
   <script src="/javascripts/jquery.min.js"></script>
@@ -63,65 +87,172 @@
   <script src="/javascripts/jquery.pagination.js"></script>
   <script>
   (function ($) {
+
     // 每页多少条数据
     let pageSize = 8
     // 当前第几页
     let pageNum = 1
+    // 排序依据 默认time排序
+    let orderBy = "time"
+    // 分类 默认全部
+    let classify = 'all'
+    // 获取用户信息 显示删除按钮 还是点赞等等  取出userinfo._id
+    let userinfo = JSON.parse($.cookie("userinfo") || '{"_id": null}')
 
     // 面向window对象
     init()
-
-
-    
-
-
     function init () {
+      // 绑定的操作事件
+      addEvent()
+
+      // 接口执行
       getCommits ((data) => {
         renderCommits(data.commits)
-        renderPagination (data.totalData)
+        renderPagination (data.totalData)      
       })
     }
 
+    // 获取数据接口
     function getCommits (callback) {
       $.ajax({
         url: '/api/v1/getcommits',
         type: 'GET',
         data: {
           pageSize,
-          pageNum
+          pageNum,
+          // 排序依据
+          orderBy,
+          // 分类
+          classify
         },
         success: function (results) {
-          console.log(results)
           callback(results.data)
         }
       })
     }
 
+    // 内容拼接
     function renderCommits (commits) {
       let str = ''
       // map 变为数组 join 转为字符串
       str = commits.map((item, i) => {
+        let countions = ""
+        if (userinfo._id !== item.author_id) {
+          countions = `<div>
+            <button class="btn btn-default hot"><i class="glyphicon glyphicon-thumbs-up"></i><span>${item.hot}</span></button>
+            </div>
+            `
+        } else {
+          countions =`<button class="btn btn-danger delete">删除</button>`
+        }
         return `<tr>
-          <td>${i+1}</td>
-          <td>${item.title}</td>
+          <td>${pageNum * 8 + i - 7}</td>
+          <td>${item.title}<label class="label label-info">${item.type}</label></td>
           <td>${item.author_nick}</td>
-          <td>${item.time}</td>
-          <td>
-            <button class="btn btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></button>
-            <button class="btn btn-primary"><i class="glyphicon glyphicon-thumbs-down"></i></button>
-          </td>
+          <td>${formatDate(item.time)}</td>
+          <td data-id="${item._id}">` +
+              countions
+          + `</td>
         </tr> `
       }).join();
-      // $(".commit-list tbody").html('')
       $(".commit-list tbody").html(str)
     }
 
+    
+
+    // 给按钮绑定操作事件
+    function addEvent () { 
+
+      // 排序操作
+      $(".order").delegate('button', 'click', function () {
+        orderBy = $(this).attr('data-order')
+        $(this).siblings("span").find(".text strong").html($(this).html())
+        // 样式切换
+        $(this).addClass("btn-primary").removeClass("btn-default").siblings('.btn').addClass("btn-default").removeClass("btn-primary")
+        pageSize = 8
+        pageNum = 1;
+        getCommits ((data) => {
+            renderCommits(data.commits)
+            renderPagination (data.totalData)
+          })
+        })
+
+        // 分类操作
+        $(".classify").delegate('button', 'click', function () {
+        classify = $(this).attr('data-type')
+        $(this).siblings("span").find(".text strong").html($(this).html())
+        // 样式切换
+        $(this).addClass("btn-primary").removeClass("btn-default").siblings('.btn').addClass("btn-default").removeClass("btn-primary")
+        pageSize = 8
+        pageNum = 1;
+        // 从新执行分页
+        getCommits ((data) => {
+            renderCommits(data.commits)
+            renderPagination (data.totalData)
+          })
+        })
+
+        // 点赞操作
+        // 设置一个防止多次点击的开关
+        let isFlag = true;        
+        $(".commit-list").on("click", ".hot", function () {
+          let id = $(this).parents("td").attr("data-id")
+          // 判断状态 和 是否发送请求
+          if ($(this).hasClass("btn-primary")){
+            return false
+          }
+          // 防止快速点击的操作
+          if (isFlag) {
+            isFlag = false
+            // 发送请求
+            $.ajax({
+              url: "/api/v1/hot",
+              type: 'post',
+              data: {
+                id: id
+              },
+              success: (results =>{
+                console.log(results)
+                if (results.err === 200) {
+                  // this 的时候 使用箭头函数   ES6中定义的时候绑定this的具体含义，应该继承的是父执行上下文里面的this，切忌是父执行上下文！！！
+                  $(this).removeClass("btn-default")
+                  $(this).addClass("btn-primary")
+                  $(this).find("span").text(parseInt($(this).text()) + 1)    
+                  // 此处放开开关
+                  isFlag = true              
+                }
+              })
+            })
+          }
+        })
+
+        // 删除列表内容的接口
+        $(".commit-list").delegate(".delete", "click", function () {
+
+          // 删除的ajax
+          $.ajax({
+            url: "/api/v1/remove_commits",
+            type: "post",
+            data: {
+
+            },
+            success: function (results) {
+              console.log(results)
+            }
+            
+          })
+        })
+
+
+    }
+
+
+    // 分页插件
     function renderPagination (totalData) {
-      // 分页
       $('.M-box1').pagination({
         // 一共多少条多少数据
         totalData: totalData,
-        //
+        // 显示几条数据
         showData: pageSize,
         coping: true,
         callback: function (api) {
@@ -133,6 +264,21 @@
         }
       });
     }
+
+    // 时间戳转换
+    function add0(m){return m<10?'0'+m:m }
+    function formatDate(needTime) {
+      //needTime是整数，否则要parseInt转换
+      var time = new Date(needTime);
+      var y = time.getFullYear();
+      var m = time.getMonth()+1;
+      var d = time.getDate();
+      var h = time.getHours();
+      var mm = time.getMinutes();
+      var s = time.getSeconds();
+      return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    }
+
   })($)
   </script>
 </html>

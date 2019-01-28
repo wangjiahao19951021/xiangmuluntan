@@ -26,6 +26,11 @@ router.post("/upload_content_img", handler.uploadContentImgHandler)
 // 返回列表内容接口
 router.get("/getcommits", handler.getcommitsHandler)
 
+// 点赞功能接口
+router.post("/hot", handler.hotHandler)
+
+// 删除内容接口
+router.post("/remove_commits", handler.removecommitsHandler)
 
 
 

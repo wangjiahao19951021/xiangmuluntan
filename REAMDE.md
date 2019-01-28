@@ -55,11 +55,12 @@ yarn add formidable -S
 
 
 
-## nodejs项目在外网访问  通过ngrok映射
+
+### nodejs项目在外网访问  通过ngrok映射
 
 ngrok authtoken 授权码
 
-打开ngrok.exe          输入ngrok http 8080
+打开ngrok.exe          输入ngrok http 3000
 
 需要注意的是，这里的端口8080可以根据需要替换成其他端口。这条命令的意思是将本地8080端口对应的服务暴露到外网中。 
 
@@ -74,4 +75,8 @@ ngrok authtoken 授权码
 当然，ngrok也提供了解决方法，那就是付费，可以设置固定域名。
 
 
+# https://www.cnblogs.com/shiweida/p/7692468.html mongodb数据库可视化
+
+
+# cmd cls清除内容
 
