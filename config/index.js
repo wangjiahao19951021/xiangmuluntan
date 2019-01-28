@@ -1,7 +1,7 @@
 
 const config = {
     port: 3000,
-    hostname: 'localhost',
+    // hostname: 'localhost',
     // 配置数据库地址
     mongo_url: 'mongodb://localhost:27017',
     dbname: 'luntanshujuku',

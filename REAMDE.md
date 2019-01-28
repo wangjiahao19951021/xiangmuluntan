@@ -54,3 +54,24 @@ yarn add formidable -S
 # 分页插件 pagination      http://www.jq22.com/jquery-info5697
 
 
+
+## nodejs项目在外网访问  通过ngrok映射
+
+ngrok authtoken 授权码
+
+打开ngrok.exe          输入ngrok http 8080
+
+需要注意的是，这里的端口8080可以根据需要替换成其他端口。这条命令的意思是将本地8080端口对应的服务暴露到外网中。 
+
+
+
+红色标注的方框内，第一个是http协议对应的外网地址，第二个是https协议对应的外网地址。
+
+这样，凡是访问https://2ef82bb3.ngrok.io的请求都将发送到localhost:8080。
+
+每次启动ngrok都会分配一个新的外网域名，所以需要每次更换配置或者更换访问地址，不太方便。
+
+当然，ngrok也提供了解决方法，那就是付费，可以设置固定域名。
+
+
+
