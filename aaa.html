@@ -1,0 +1,21 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default5.aspx.cs"Inherits="Default5"%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<title>Porschev---Jquery 事件冒泡</title>
+</head>
+<body>
+　　<form id="form1" runat="server">
+　　　　<div id="divOne" onclick="alert('我是最外层');">
+　　　　　　<div id="divTwo" onclick="alert('我是中间层！')">
+　　　　　　　　<a id="hr_three" href="http://www.baidu.com" mce_href="http://www.baidu.com"onclick="alert('我是最里层！')">点击我</a>
+　　　　　　</div>
+　　　　</div>
+　　</form>
+</body>
+</html> 
+<script type="text/javascript">
+            document.getElementById('hr_three').addEventListener('click',function(e){e.stopPropagation()},false);
+</script>

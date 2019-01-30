@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/common.css">
+  </head>
+  <body>
+    <!-- <!-- =普通输出 - -输出-> -->
+    <%- include("./header/header.ejs") %>
+    <!-- <%= JSON.stringify(content) %> -->
+
+    <section class="container">
+
+      <p><a href="/">回到首页</a>&nbsp;&nbsp;<a href="/commitlist">帖子列表</a></p>
+
+      <% if ( !content.err || content.err === 500) { %>
+        <div class="alert alert-danger">出现了未知错误，请重试</div>
+      <% } else if (content.err === 201) { %>
+        <div class="alert alert-warning">当前数据不存在</div>
+      <% } else { %>
+        <h1 style="margin: 20px 0;">标题： <span><%= content.data.title %></span></h1>
+        <p>
+          <strong>作者：</strong><span><%= content.data.author_nick %></span>
+          <strong>发布时间：</strong><span><%= content.data.time %></span>
+          <strong>类型：</strong><span><%= content.data.type %></span>
+        </p>
+        <!-- 内容 -->
+        <div class="content">
+          <strong style="margin: 20px 0; display: block;">内容：</strong>
+            <%- content.data.content %>
+        </div>
+      <% } %>
+
+      
+
+    </section>
+
+    
+  </body>
+  <script src="/javascripts/jquery.min.js"></script>
+  <script src="/javascripts/jquery-cookie.js"></script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+</html>

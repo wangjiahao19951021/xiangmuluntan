@@ -23,6 +23,14 @@
       background: #12158c52;
       color: #0e0e0e;
     }
+    a{
+      text-decoration: none;
+    }
+    a:hover{
+      text-decoration: none;
+      cursor: pointer;
+      
+    }
 
   </style>
   <body>
@@ -132,35 +140,7 @@
         }
       })
     }
-
-    // 内容拼接
-    function renderCommits (commits) {
-      let str = ''
-      // map 变为数组 join 转为字符串
-      str = commits.map((item, i) => {
-        let countions = ""
-        if (userinfo._id !== item.author_id) {
-          countions = `<div>
-            <button class="btn btn-default hot"><i class="glyphicon glyphicon-thumbs-up"></i><span>${item.hot}</span></button>
-            </div>
-            `
-        } else {
-          countions =`<button class="btn btn-danger delete">删除</button>`
-        }
-        return `<tr>
-          <td>${pageNum * 8 + i - 7}</td>
-          <td>${item.title}<label class="label label-info">&nbsp;&nbsp;${item.type}</label></td>
-          <td>${item.author_nick}</td>
-          <td>${formatDate(item.time)}</td>
-          <td data-id="${item._id}">` +
-              countions
-          + `</td>
-        </tr> `
-      }).join();
-      $(".commit-list tbody").html(str)
-    }
-
-    
+  
 
     // 给按钮绑定操作事件
     function addEvent () { 
@@ -196,8 +176,8 @@
 
         // 点赞操作
         // 设置一个防止多次点击的开关
-        let isFlag = true;      
-        $(".commit-list").on("click", ".hot", function () {
+        let isFlag = true;   
+          $(".commit-list").on("click", ".hot", function () {
           // 点赞时判断是否登录的简单操作
           if (userinfo._id) {
             let id = $(this).parents("td").attr("data-id")
@@ -275,7 +255,6 @@
           })
         })
 
-
     }
 
 
@@ -309,6 +288,34 @@
       var mm = time.getMinutes();
       var s = time.getSeconds();
       return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    }
+
+
+        // 内容拼接
+        function renderCommits (commits) {
+      let str = ''
+      // map 变为数组 join 转为字符串
+      str = commits.map((item, i) => {
+        let countions = ""
+        if (userinfo._id !== item.author_id) {
+          countions = `<div>
+            <button class="btn btn-default hot"><i class="glyphicon glyphicon-thumbs-up"></i><span>${item.hot}</span></button>
+            </div>
+            `
+        } else {
+          countions =`<button class="btn btn-danger delete">删除</button>`
+        }
+        return `<tr class="trs">
+          <td>${pageNum * 8 + i - 7}</td>
+          <td><a href="/commitlist/content/?id=${item._id}">${item.title}<label class="label label-info">&nbsp;&nbsp;${item.type}</label></a></td>
+          <td>${item.author_nick}</td>
+          <td>${formatDate(item.time)}</td>
+          <td data-id="${item._id}">` +
+              countions
+          + `</td>
+        </tr> `
+      }).join();
+      $(".commit-list tbody").html(str)
     }
 
 

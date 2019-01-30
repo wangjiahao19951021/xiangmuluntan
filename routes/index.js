@@ -29,6 +29,13 @@ var router = express.Router();
 // 查找分类信息
 const findClassify = require("./handers/find_classfiy")
 
+// 引入解析地址工具
+const url_util = require("url")
+
+// 引入连接数据库模块
+const connect = require("../modules/connect")
+const ObjectId = require("mongodb").ObjectId
+
 
 
 
@@ -75,6 +82,50 @@ router.get('/commit', function (req, res, next) {
 router.get('/commitlist', function (req, res, next) {
 
   res.render('commitlist', { title: '列表'});
+  
+})
+
+
+// 内容详情页面
+// 1 解析出commit id
+// 2.连接数据库
+// 3.返回给ejs模板
+router.get('/commitlist/content', function (req, res, next) {
+  
+ let id = url_util.parse(req.url, true).query.id || 0
+ next(id)
+
+}, function (id, req, res, next) {
+
+  let contnets = {err: null, data: {}}
+  if (id === 0 || id.length < 24 || id.length > 24) {
+    next(contnets); 
+    return false;
+  } 
+  connect((db, close) => {
+    db.collection("commits").find({_id: ObjectId(id)}).toArray((err, results) => {
+      if (err) {
+        contnets.err = 500
+        close()        
+      } else {
+        // 如果没有数据
+        if (!results.length) {
+          contnets.err = 201
+          close()
+        } else {
+          contnets.err = 200
+          contnets.data = results[0]
+          close()             
+        }
+      }
+      // 将数据甩出去
+        next(contnets)
+    })
+  })
+
+}, function (contnets, req, res, next) {
+
+  res.render('content', { title: '详情', content: contnets});
   
 })
 
