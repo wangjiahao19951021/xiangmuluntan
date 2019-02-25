@@ -33,5 +33,9 @@ router.post("/hot", handler.hotHandler)
 router.post("/remove_commits", handler.removecommitsHandler)
 
 
+// 点赞最新
+router.post("/hot_like", handler.hotlikeHandler)
+
+
 
 module.exports = router;

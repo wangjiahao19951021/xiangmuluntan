@@ -156,6 +156,8 @@
         getCommits ((data) => {
             renderCommits(data.commits)
             renderPagination (data.totalData)
+            hot_like()
+            
           })
         })
 
@@ -171,6 +173,8 @@
         getCommits ((data) => {
             renderCommits(data.commits)
             renderPagination (data.totalData)
+            hot_like()
+            
           })
         })
 
@@ -181,6 +185,8 @@
           // 点赞时判断是否登录的简单操作
           if (userinfo._id) {
             let id = $(this).parents("td").attr("data-id")
+            var like_id = userinfo._id
+            console.log(like_id)
             // 判断状态 和 是否发送请求
             if ($(this).hasClass("btn-primary")){
               return false
@@ -193,10 +199,12 @@
                 url: "/api/v1/hot",
                 type: 'post',
                 data: {
-                  id: id
+                  id: id,
+                  like_id: like_id
+
                 },
                 success: (results =>{
-                  console.log(results)
+                  // console.log(results)
                   if (results.err === 200) {
                     // this 的时候 使用箭头函数   ES6中定义的时候绑定this的具体含义，应该继承的是父执行上下文里面的this，切忌是父执行上下文！！！
                     $(this).removeClass("btn-default")
@@ -271,6 +279,8 @@
           // 点击从新渲染数据
           getCommits ((data) => {
             renderCommits(data.commits)
+            hot_like()
+            
           })
         }
       });
@@ -291,8 +301,9 @@
     }
 
 
-        // 内容拼接
-        function renderCommits (commits) {
+    // 内容拼接
+    function renderCommits (commits) {
+     
       let str = ''
       // map 变为数组 join 转为字符串
       str = commits.map((item, i) => {
@@ -316,7 +327,57 @@
         </tr> `
       }).join();
       $(".commit-list tbody").html(str)
+
+
+      
+      
+      
     }
+    hot_like()
+    // 处理点赞
+    function hot_like() {
+      $(function () {
+      // 渲染点赞的逻辑
+          // 此处使用原生ajax
+          var xhr;
+          if (window.XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+          } else {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          xhr.open("post", "/api/v1/hot_like", true);
+          // 将请求发送至服务器 
+          // string:仅用于post请求
+          xhr.send(null);
+          xhr.onreadystatechange = function (event) {
+            if(xhr.readyState == 4){    //4表示解析完毕
+                  if(xhr.status == 200){    //200为正常返回
+                    var results = JSON.parse(xhr.responseText)
+                    let userinfo1 = JSON.parse($.cookie("userinfo") || '{"_id": null}')
+                    console.log(userinfo1)
+                    if (userinfo1) {
+                      // console.log(userinfo1._id)
+                      // 循环点赞数据库集合中用户
+                      for (var i = 0; i < results.data.length; i ++) {
+                        for (var j = 0; j < results.data[i].hot_id.length; j++) {
+                          if (results.data[i].hot_id[j] == userinfo1._id) {
+                              for (var l = 0; l < $("tbody .trs").length; l ++) {
+                                // 
+                                if ($("tbody .trs").eq(l).find("td").eq(4).attr("data-id") == results.data[i].id) {
+                                  $("tbody .trs").eq(l).find("td").eq(4).find("button").addClass("btn-primary").removeClass("btn-default")
+                                }
+                              }
+                          }
+                        }
+                      }
+                    }
+                    
+                  }
+                }
+          }
+    })
+    }
+    
 
 
   })($)

@@ -13,6 +13,10 @@ const hotHandler = require("./hot_handler")
 // 删除内容接口
 const removecommitsHandler = require("./remove_commits_handler")
 
+// 点赞
+const hotlikeHandler = require("./hot_like_handler")
+
+
 const handler = {
     // 注册
     registerHandler,
@@ -29,7 +33,10 @@ const handler = {
     // 点赞功能接口
     hotHandler,
     // 删除内容接口
-    removecommitsHandler
+    removecommitsHandler,
+
+    // 点赞从做
+    hotlikeHandler
 
 }
 module.exports = handler
